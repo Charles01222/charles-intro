@@ -100,6 +100,10 @@ h1,h2,h3,p,ol { margin: 0; }
 .hero-copy { max-width: min(73%, 960px); }
 .hero-name { color: #dee8f9; font-size: clamp(23px, 2.3vw, 37px); margin-top: clamp(24px, 4.6vh, 56px); font-weight: 560; }
 .hero h1 { font-size: clamp(53px, 7.05vw, 128px); line-height: 1.11; letter-spacing: -.072em; margin-top: 14px; font-weight: 790; text-wrap: balance; }
+.hero-opening { position: relative; align-self: stretch; display: grid; align-items: center; min-height: 220px; }
+.hero-opening h1 { margin-top: clamp(16px, 3.2vh, 36px); }
+.hero-opening h1 small { color: #c8d5ee; font-size: .48em; font-weight: 560; letter-spacing: -.025em; white-space: nowrap; }
+.opening-subtitle { position: absolute; inset-inline-start: min(2vw, 30px); bottom: clamp(12px, 2.6vh, 28px); color: #d2ddef; font-size: clamp(14px, 1.25vw, 20px); line-height: 1.35; }
 .hero-line { font-size: clamp(22px, 2.4vw, 38px); line-height: 1.5; color: #d7e3f5; margin-top: 24px; }
 .departure .hero-name { font-size: clamp(18px, 1.6vw, 28px); }
 .departure h1 { font-size: clamp(46px, 6.1vw, 106px); }

@@ -5,13 +5,14 @@ import { globeMarkup } from './visuals/globe.js';
 const name = () => `${escapeHtml(profile.name)} <span>/</span> ${escapeHtml(profile.englishName)}`;
 
 export function intro(slide) {
-  return `<div class="hero content ${['perspectives', 'departure'].includes(slide.id) ? 'departure' : ''}">
+  return `<div class="hero content ${slide.identity ? 'hero-opening' : 'departure'}">
     <div class="hero-copy">
       <div class="eyebrow"><i></i> ${escapeHtml(slide.chapter.label)}</div>
-      <p class="hero-name">${name()}</p>
-      <h1>${escapeHtml(slide.title)}</h1>
+      ${slide.identity ? `<h1>${escapeHtml(profile.name)} <small>/ ${escapeHtml(profile.englishName)}</small></h1>` :
+        `<p class="hero-name">${name()}</p><h1>${escapeHtml(slide.title)}</h1>`}
       ${slide.line ? `<p class="hero-line rise">${escapeHtml(slide.line)}</p>` : ''}
     </div>
+    ${slide.subtitle ? `<p class="opening-subtitle rise">${escapeHtml(slide.subtitle)}</p>` : ''}
   </div>`;
 }
 

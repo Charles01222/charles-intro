@@ -7,6 +7,8 @@ export const profile = {
   invitation: '如果我们的故事有交集，欢迎来聊。'
 };
 
+const openingName = `${profile.name} / ${profile.englishName}`;
+
 export const places = {
   nanjing: { year: '2001–2019', place: '中国 · 南京', label: '南京', detail: '长大', coordinates: [118.80, 32.06], alias: 'NANJING' },
   america: { year: '2019–2023', place: '美国', label: '美国', detail: '学习计算机与探索 AI', coordinates: [-74.45, 40.49], alias: 'UNITED STATES' },
@@ -37,8 +39,8 @@ export const presentation = {
   land: './assets/land-topology.json',
   chapters: [
     { id: 'galaxy', label: '开篇', seconds: 55, slides: [
-      { id: 'intro', view: 'intro', title: '我是半个应届生。' },
-      { id: 'half', view: 'intro', title: '我是半个应届生。', line: '一半还在学校学习，一半已经在工厂调度车了。' },
+      { id: 'intro', view: 'intro', title: openingName, identity: true },
+      { id: 'half', view: 'intro', title: openingName, identity: true, subtitle: '我是半个应届生' },
       { id: 'perspectives', view: 'intro', title: '我一直好奇，机器怎么做决定。', line: '这个问题后来把我带到了实验室、职业工作台和工厂。' },
       { id: 'departure', view: 'intro', title: '故事从南京开始。', action: '翻开第一章' }
     ] },
