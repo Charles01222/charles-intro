@@ -1,0 +1,199 @@
+.bm-ats-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bm-ats-tool-standalone {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+.bm-ats-tool-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+.bm-ats-card {
+  border-radius: 16px;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  box-shadow: var(--bm-highlight-top), 0 1px 3px rgba(15, 23, 42, 0.05);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.bm-ats-field-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.bm-ats-field-head label {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--ui-text);
+}
+.bm-ats-textarea {
+  width: 100%;
+  min-height: 190px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-input, var(--ui-surface-soft));
+  color: var(--ui-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  resize: vertical;
+}
+.bm-ats-textarea.is-jd {
+  min-height: 110px;
+}
+.bm-ats-textarea:focus {
+  outline: none;
+  border-color: var(--ui-accent);
+  box-shadow: var(--bm-focus-ring);
+}
+.bm-ats-score-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ui-border);
+}
+.bm-ats-ring-wrap {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  flex-shrink: 0;
+}
+.bm-ats-ring-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+.bm-ats-ring-value strong {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ui-text);
+}
+.bm-ats-ring-value small {
+  font-size: 10px;
+  color: var(--ui-text-muted);
+  margin-top: 2px;
+}
+.bm-ats-dims {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bm-ats-dim-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.bm-ats-dim-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.bm-ats-dim-top strong { font-weight: 600; color: var(--ui-text); }
+.bm-ats-dim-top span { color: var(--ui-text-muted); }
+.bm-ats-dim-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ui-surface-soft);
+  overflow: hidden;
+}
+.bm-ats-dim-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ui-accent);
+  transition: width 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.bm-ats-dim-fill[data-tone="warn"] { background: var(--ui-warning); }
+.bm-ats-dim-fill[data-tone="critical"] { background: var(--ui-danger); }
+
+.bm-ats-kw-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ui-border);
+}
+.bm-ats-kw-title {
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--ui-text-secondary);
+}
+.bm-ats-kw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.bm-ats-chip {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+.bm-ats-chip[data-kind="matched"] {
+  background: color-mix(in srgb, var(--ui-accent) 13%, transparent);
+  color: var(--ui-accent);
+}
+.bm-ats-chip[data-kind="missing"] {
+  background: color-mix(in srgb, var(--ui-warning) 14%, transparent);
+  color: var(--ui-warning);
+}
+
+.bm-ats-findings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ui-border);
+}
+.bm-ats-finding {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface-raised, var(--ui-surface));
+  font-size: 12px;
+}
+.bm-ats-finding[data-severity="critical"] {
+  border-color: color-mix(in srgb, var(--ui-danger) 35%, var(--ui-border));
+  background: color-mix(in srgb, var(--ui-danger) 6%, var(--ui-surface));
+}
+.bm-ats-finding[data-severity="warn"] {
+  border-color: color-mix(in srgb, var(--ui-warning) 35%, var(--ui-border));
+  background: color-mix(in srgb, var(--ui-warning) 6%, var(--ui-surface));
+}
+.bm-ats-finding strong {
+  display: block;
+  color: var(--ui-text);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.bm-ats-finding p {
+  margin: 2px 0 0;
+  color: var(--ui-text-secondary);
+  line-height: 1.5;
+  font-size: 11.5px;
+}
+
+/* Modal overlay when ATS diagnostic tool is opened inside Agent OS */
