@@ -5,9 +5,9 @@ export const fleet = [
 ];
 
 export const jobs = [
-  { id: 'A', title: '加急补料', weight: 5, pickup: [2, 2], drop: [8, 4] },
-  { id: 'B', title: '常规入库', weight: 3, pickup: [4, 2], drop: [4, 6] },
-  { id: 'C', title: '空托盘回收', weight: 1, pickup: [6, 0], drop: [0, 2] }
+  { id: 'A', title: '加急补料', weight: 5, pickup: [2, 2], drop: [8, 4], from: '总仓发料口', to: '产线 02 上料口' },
+  { id: 'B', title: '常规入库', weight: 3, pickup: [4, 2], drop: [2, 0], from: '产线 01 下料口', to: '总仓收货口' },
+  { id: 'C', title: '空托盘回收', weight: 1, pickup: [6, 0], drop: [0, 2], from: '产线 01 回收位', to: '总仓托盘位' }
 ];
 
 const width = 9, height = 7, limit = 40;

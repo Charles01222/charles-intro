@@ -54,10 +54,7 @@ export const presentation = {
       { id: 'research-wrap', view: 'research-wrap', title: '把行为变成表示，把表示变成规律，再让规律帮助决策。' }
     ] },
     { id: 'betterme', label: '成形 · BetterMe', seconds: 160, slides: [
-      { id: 'betterme', view: 'betterme', module: 'overview', title: '我把求职做成了一张工作台。', action: '职业规划' },
-      { id: 'betterme-career', view: 'betterme', module: 'career', title: '先想清楚，下一步往哪里走。', action: '训练与面试' },
-      { id: 'betterme-practice', view: 'betterme', module: 'practice', title: '把面试里答不好的，变成下一道练习。', action: '产品收束' },
-      { id: 'betterme-wrap', view: 'betterme-wrap', title: '从一个自己的问题，做到一套能反复使用的工具。' }
+      { id: 'betterme', view: 'betterme', title: '我把求职做成了一张工作台。', action: '翻到上海篇' }
     ] },
     { id: 'industry', label: '入场 · 上海', seconds: 110, slides: [
       { id: 'shanghai', view: 'map', location: 'shanghai', title: '把技术带进真实现场。', line: '从模型里的决策，走到工厂里的协同。' },

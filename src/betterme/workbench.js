@@ -3,21 +3,24 @@ import { escapeHtml, header, icon } from '../ui.js';
 import { atsView, attachDemo } from './demo.js';
 
 const workspaces = [
+  { id: 'overview', label: '工作台总览', icon: 'grid', image: 'overview' },
   { id: 'resume', label: '简历工作室', icon: 'window', image: 'resume', copy: '从同一份事实库维护多版简历，核对经历、切换版式并导出。' },
-  { id: 'advisor', label: 'AI 顾问', icon: 'spark', image: 'advisor', copy: '以岗位要求和真实经历为依据，串起研判、规划、训练与修改建议。' },
+  { id: 'advisor', label: 'AI 顾问', icon: 'spark', copy: '以岗位要求和真实经历为依据，串起研判、规划、训练与修改建议。' },
   { id: 'atlas', label: '岗位地图', icon: 'pin', image: 'atlas', copy: '从地点和通勤范围出发，把招聘信息放回地图上看。' },
   { id: 'opportunities', label: '机会与投递', icon: 'route', image: 'opportunities', copy: '保存机会、记录投递状态，同时保留每个岗位的下一步。' },
-  { id: 'resources', label: '资料库', icon: 'notes', copy: '把岗位材料、准备笔记和可复用的练习证据集中管理。', items: ['岗位材料', '学习笔记', '练习证据'] },
+  { id: 'resources', label: '资料库', icon: 'notes', image: 'resources', copy: '汇集面试、简历和职业发展的参考资料。' },
   { id: 'autopilot', label: '自动化工坊', icon: 'settings', image: 'autopilot', copy: '把求职工作拆成可以编排的步骤，关键操作由本人确认。' }
 ];
 
 const advisorTools = [
-  { id: 'ats', label: '岗位研判' },
-  { id: 'evidence', label: '简历与经历', copy: '把每条修改建议连回已有事实，先核对经历，再决定怎么写。', items: ['经历事实', '岗位要求', '改写建议'] },
-  { id: 'career', label: '职业规划', slide: 'betterme-career' },
-  { id: 'learning', label: '学习提升', copy: '把岗位差距变成学习任务，保存资料、练习结果和可复用证据。', items: ['待补能力', '资料与练习', '演练与证据'] },
-  { id: 'practice', label: '训练与面试', slide: 'betterme-practice' },
-  { id: 'handoff', label: '外部协作', copy: '通过本地连接将核实过的信息交给外部工具，由用户选择提供的内容。', items: ['核实事实', '本地连接', '人工确认'] }
+  { id: 'ats', label: '岗位研判', image: 'advisor' },
+  { id: 'evidence', label: '简历与经历', image: 'evidence', copy: '把修改建议连回已有事实，再决定怎么写。' },
+  { id: 'career', label: '职业规划', image: 'career' },
+  { id: 'learning', label: '学习提升', image: 'learning', copy: '从目标岗位的差距出发，确定下一步学什么。' },
+  { id: 'practice', label: '训练与面试', image: 'practice' },
+  { id: 'growth', label: '资料与练习', image: 'growth', copy: '围绕岗位要求整理材料，把学习内容转成练习。' },
+  { id: 'studio', label: '演练与证据', image: 'studio', copy: '用演练复盘表现，把有依据的结果留存下来。' },
+  { id: 'handoff', label: '外部协作', image: 'handoff', copy: '通过本地连接把核实过的信息交给外部工具，由用户选择提供的内容。' }
 ];
 
 const paths = [
@@ -30,9 +33,8 @@ const drills = [
   { label: '专项训练', question: '当业务和技术对指标口径有分歧，你会怎么推进？', answer: '我会先让双方用同一组样例算结果，再定位差异来自哪项定义，最后约定使用场景。', feedback: ['说清楚如何让分歧可重现。', '补上谁确认标准，以及以后怎样发现口径再次漂移。'] }
 ];
 
-function moduleButton(item, current, slideId) {
-  const route = item.slide && item.slide !== slideId ? `data-go="${item.slide}"` : `data-module="${item.id}"`;
-  return `<button type="button" ${route} ${item.id === current ? 'aria-current="page"' : ''}>${item.icon ? icon(item.icon, 17) : ''}${item.label}</button>`;
+function moduleButton(item, current) {
+  return `<button type="button" data-module="${item.id}" ${item.id === current ? 'aria-current="page"' : ''}>${item.icon ? icon(item.icon, 17) : ''}${item.label}</button>`;
 }
 
 export function betterMeView(slide) {
@@ -43,35 +45,52 @@ export function betterMeView(slide) {
         <small>离线演示</small></div>
       <div class="workbench-layout">
         <nav class="workbench-nav" aria-label="BetterMe 功能">
-          <button type="button" ${slide.module === 'overview' ? 'data-module="overview"' : 'data-go="betterme"'} ${slide.module === 'overview' ? 'aria-current="page"' : ''}>${icon('grid',17)} 工作台总览</button>
-          ${workspaces.map(item => moduleButton(item, slide.module)).join('')}
-          <div class="workbench-focus">${advisorTools.filter(item => item.slide).map(item => moduleButton(item, slide.module, slide.id)).join('')}</div>
+          ${workspaces.map(item => moduleButton(item)).join('')}
         </nav>
         <div class="workbench-pane" id="workbench-pane"></div>
       </div>
       <div class="workbench-foot"><span>虚构示例 · 浏览器本地运行</span><a href="${escapeHtml(betterMe.source)}" target="_blank" rel="noopener noreferrer">BetterMe 源码 ${icon('external', 13)}</a></div>
     </div>
+    <dialog class="bench-quicklook" aria-labelledby="quicklook-title">
+      <div class="quicklook-window">
+        <header class="quicklook-bar">
+          <button type="button" class="quicklook-close" data-close-preview aria-label="关闭截图"><span aria-hidden="true">×</span></button>
+          <h2 id="quicklook-title"></h2>
+          <button type="button" class="quicklook-scale" data-toggle-scale aria-pressed="false">原始大小</button>
+        </header>
+        <div class="quicklook-image"><img alt=""></div>
+      </div>
+    </dialog>
   </div>`;
 }
 
-function advisorNav(current, slideId) {
-  return `<nav class="advisor-tools" aria-label="AI 顾问功能">${advisorTools.map(item => moduleButton(item, current, slideId)).join('')}</nav>`;
+function advisorNav(current) {
+  return `<nav class="advisor-tools" aria-label="AI 顾问功能">${advisorTools.map(item => moduleButton(item, current)).join('')}</nav>`;
 }
 
-function feature(item, slideId) {
-  return `<header class="bench-head"><h2>${item.label}</h2><p>${item.copy}</p></header>
-    ${item.id === 'advisor' ? advisorNav(item.id, slideId) : ''}
-    ${item.image ? `<figure class="bench-image"><img src="./assets/betterme/${item.image}.webp" alt="${item.label}产品截图"><figcaption>产品截图</figcaption></figure>` :
-      `<div class="bench-summary">${item.items.map(name => `<span>${name}</span>`).join('')}</div>`}`;
+function preview(item) {
+  return `<figure class="bench-image">
+    <button type="button" data-zoom aria-haspopup="dialog" aria-label="放大${item.label}截图">
+      <img src="./assets/betterme/${item.image}.webp" alt="${item.label}真实应用截图">
+      <span>${icon('fullscreen', 15)} 放大查看</span>
+    </button>
+  </figure>`;
+}
+
+function feature(item) {
+  return `<header class="bench-head"><h2>${item.label}</h2><p>${item.copy}</p></header>${preview(item)}`;
 }
 
 function overview() {
   return `<div class="bench-overview">
     <header class="bench-head"><h2>把经历、机会和成长放进同一套工具。</h2><p>从整理手上的事实，到准备下一场面试。</p></header>
-    <div class="bench-overview-grid">${workspaces.map(item =>
+    <div class="bench-overview-grid">${workspaces.slice(1).map(item =>
       `<button type="button" data-module="${item.id}"><span>${icon(item.icon, 19)} ${item.label}</span><small>${item.copy}</small></button>`).join('')}</div>
-    ${advisorNav('overview')}
   </div>`;
+}
+
+function withPreview(contents, item) {
+  return `<div class="bench-split"><div class="bench-interaction">${contents}</div>${preview(item)}</div>`;
 }
 
 function choiceButtons(records, active, kind) {
@@ -104,38 +123,67 @@ function practiceDemo(selection, stage) {
   </div>`;
 }
 
-export function mountWorkbench(scene, slide, signal) {
+export function mountWorkbench(scene, signal, initial = 'overview') {
   const pane = scene.querySelector('#workbench-pane');
   const nav = scene.querySelector('.workbench-nav');
-  let current = slide.module;
+  const dialog = scene.querySelector('.bench-quicklook');
+  const dialogImage = dialog.querySelector('img');
+  const dialogTitle = dialog.querySelector('h2');
+  const close = dialog.querySelector('[data-close-preview]');
+  const scale = dialog.querySelector('[data-toggle-scale]');
+  let current = initial;
+  let lastAdvisor = advisorTools.some(item => item.id === initial) ? initial : 'ats';
   let panel;
   let pathIndex = 0, expanded = false, drillIndex = 0, stage = 0;
 
   function draw() {
     panel?.abort();
     panel = new AbortController();
-    for (const button of nav.querySelectorAll('[data-module], [data-go]')) {
-      const selected = button.dataset.module === current || advisorTools.some(item => item.id === current && item.slide === button.dataset.go);
-      if (selected) button.setAttribute('aria-current', 'page');
+    const advisor = advisorTools.find(item => item.id === current);
+    for (const button of nav.querySelectorAll('[data-module]')) {
+      if (button.dataset.module === (advisor ? 'advisor' : current)) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     }
-    if (current === 'career') pane.innerHTML = careerDemo(pathIndex, expanded);
-    else if (current === 'practice') pane.innerHTML = practiceDemo(drillIndex, stage);
-    else if (current === 'overview') pane.innerHTML = overview();
-    else if (current === 'ats') {
-      pane.innerHTML = advisorNav(current, slide.id) + atsView();
-      attachDemo(pane, panel.signal);
+    if (advisor) {
+      lastAdvisor = current;
+      const body = {
+        ats: () => withPreview(atsView(), advisor),
+        career: () => withPreview(careerDemo(pathIndex, expanded), advisor),
+        practice: () => withPreview(practiceDemo(drillIndex, stage), advisor)
+      };
+      pane.innerHTML = advisorNav(current) + (body[current]?.() || feature(advisor));
+      if (current === 'ats') attachDemo(pane, panel.signal);
     } else {
-      const item = [...workspaces, ...advisorTools].find(entry => entry.id === current);
-      pane.innerHTML = (advisorTools.includes(item) ? advisorNav(current, slide.id) : '') + feature(item, slide.id);
+      const item = workspaces.find(entry => entry.id === current);
+      pane.innerHTML = current === 'overview' ? withPreview(overview(), item) : feature(item);
     }
   }
 
+  function setNaturalSize(natural) {
+    dialog.classList.toggle('is-natural', natural);
+    scale.setAttribute('aria-pressed', String(natural));
+    scale.textContent = natural ? '适合窗口' : '原始大小';
+    dialog.querySelector('.quicklook-image').scrollTo(0, 0);
+  }
+
+  close.addEventListener('click', () => dialog.close(), { signal });
+  scale.addEventListener('click', () => setNaturalSize(scale.getAttribute('aria-pressed') === 'false'), { signal });
+  dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); }, { signal });
   scene.addEventListener('click', event => {
     const button = event.target.closest('button');
     if (!button) return;
+    if (button.hasAttribute('data-zoom')) {
+      const source = button.querySelector('img');
+      dialogImage.src = source.currentSrc || source.src;
+      dialogImage.alt = source.alt;
+      dialogTitle.textContent = 'BetterMe · ' + source.alt.replace('真实应用截图', '');
+      setNaturalSize(false);
+      dialog.showModal();
+      close.focus();
+      return;
+    }
     const { module, path, drill } = button.dataset;
-    if (module) current = module;
+    if (module) { current = module === 'advisor' ? lastAdvisor : module; pane.scrollTop = 0; }
     else if (path !== undefined) { pathIndex = Number(path); expanded = false; }
     else if (drill !== undefined) { drillIndex = Number(drill); stage = 0; }
     else if (button.hasAttribute('data-reveal-plan')) expanded = true;
@@ -146,7 +194,8 @@ export function mountWorkbench(scene, slide, signal) {
     const focused = pane.contains(button);
     draw();
     if (focused) {
-      const next = pane.querySelector('[data-drill-next], [data-drill-reset], [data-reveal-plan], [aria-pressed="true"], button');
+      const sameTab = module && pane.querySelector(`[data-module="${current}"]`);
+      const next = sameTab || pane.querySelector('[data-drill-next], [data-drill-reset], [data-reveal-plan], [aria-pressed="true"]') || pane.querySelector('button');
       next?.focus({ preventScroll: true });
     }
   }, { signal });

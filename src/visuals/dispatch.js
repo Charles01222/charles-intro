@@ -1,5 +1,6 @@
 import { header, icon } from '../ui.js';
-import { buildDispatchPlan, fleet, jobs, onRoad } from './dispatch-plan.js';
+import { buildDispatchPlan, fleet, jobs } from './dispatch-plan.js';
+import { drawFactory } from './factory-scene.js';
 
 const stages = [
   ['指派任务', '距离、任务权重和预计完成时间一起进入指派决策。'],
@@ -9,8 +10,6 @@ const stages = [
 ];
 
 let plan;
-const routePoint = (path, time) => path[Math.min(time, path.length - 1)];
-const equals = (a, b) => a[0] === b[0] && a[1] === b[1];
 
 export function dispatchView(slide) {
   return `<div class="content project-content dispatch-content">
@@ -19,7 +18,7 @@ export function dispatchView(slide) {
       <div class="window-bar"><span class="traffic"><i></i><i></i><i></i></span><span>自动化工厂 · AGV 调度台</span><small>教学仿真</small></div>
       <div class="dispatch-console">
         <div class="dispatch-visual">
-          <canvas class="dispatch-canvas" width="960" height="570" role="img" aria-label="三维轴测工厂，三台 AGV 在库区道路搬运并按预约错峰通行"></canvas>
+          <canvas class="dispatch-canvas" width="1280" height="740" role="img" aria-label="三维轴测自动化工厂，三台 AGV 在总仓和产线机台的取送点之间搬运"></canvas>
           <div class="dispatch-legend"><span><i></i>取货／交付站</span><span><i></i>预约路线</span><span><i></i>潜在冲突点</span></div>
         </div>
         <aside class="dispatch-details" aria-label="调度策略">
@@ -34,119 +33,6 @@ export function dispatchView(slide) {
       </div>
     </div>
   </div>`;
-}
-
-function drawFactory(context, data, stage, time) {
-  const { width, height } = context.canvas;
-  const ground = context.createLinearGradient(0, 0, width, height);
-  ground.addColorStop(0, '#122b34');
-  ground.addColorStop(1, '#081721');
-  context.fillStyle = ground;
-  context.fillRect(0, 0, width, height);
-  const project = (x, y, z = 0) => [358 + 68 * (x - .67 * y), 101 + 27 * (x + y) - z * 44];
-
-  function polygon(points, color, outline) {
-    context.beginPath();
-    points.forEach((point, index) => context[index === 0 ? 'moveTo' : 'lineTo'](...project(...point)));
-    context.closePath();
-    context.fillStyle = color;
-    context.fill();
-    if (outline) { context.strokeStyle = outline; context.lineWidth = 1; context.stroke(); }
-  }
-
-  function box(x, y, w, d, h, top, front, side, floor = 0) {
-    const a = [x - w, y - d], b = [x + w, y - d], c = [x + w, y + d], e = [x - w, y + d];
-    const high = point => [...point, floor + h];
-    const low = point => [...point, floor];
-    polygon([low(b), low(c), high(c), high(b)], side);
-    polygon([low(e), low(c), high(c), high(e)], front);
-    polygon([high(a), high(b), high(c), high(e)], top, '#d3e9e432');
-  }
-
-  function path(points, color, thickness, dash = []) {
-    context.beginPath();
-    points.forEach((point, index) => context[index === 0 ? 'moveTo' : 'lineTo'](...project(...point)));
-    context.strokeStyle = color;
-    context.lineJoin = context.lineCap = 'round';
-    context.lineWidth = thickness;
-    context.setLineDash(dash);
-    context.stroke();
-    context.setLineDash([]);
-  }
-
-  function tag(point, label, tone, small = false) {
-    const [x, y] = project(...point);
-    context.font = `700 ${small ? 16 : 19}px system-ui,sans-serif`;
-    const length = context.measureText(label).width;
-    context.fillStyle = '#08161eee';
-    context.fillRect(x - length / 2 - 8, y - 18, length + 16, 25);
-    context.fillStyle = tone;
-    context.textAlign = 'center';
-    context.fillText(label, x, y);
-  }
-
-  polygon([[-.66,-.66,-.23],[8.66,-.66,-.23],[8.66,6.66,-.23],[-.66,6.66,-.23]], '#070f16');
-  polygon([[-.66,-.66],[8.66,-.66],[8.66,6.66],[-.66,6.66]], '#23424c', '#4b7379');
-  for (let y = 0; y < 7; y++) {
-    for (let x = 0; x < 9; x++) {
-      const road = onRoad(x, y);
-      polygon([[x-.49,y-.49],[x+.49,y-.49],[x+.49,y+.49],[x-.49,y+.49]],
-        road ? '#31535e' : '#1e3a46', road ? '#52778144' : '#74939455');
-      if (road && x % 2 === 0 && y % 2 === 0) {
-        polygon([[x-.21,y-.21],[x+.21,y-.21],[x+.21,y+.21],[x-.21,y+.21]], '#73959945');
-      }
-    }
-  }
-  if (stage === 1) {
-    data.baseline.forEach(route => path(route, '#b0a7a16c', 3, [6, 7]));
-  }
-  if (stage >= 1) {
-    data.routes.forEach((route, index) => path(route, fleet[index].color + (stage === 1 ? 'a5' : '80'), stage === 1 ? 4 : 3));
-  }
-  const props = [];
-  for (let y = 1; y < 7; y += 2) {
-    for (let x = 1; x < 9; x += 2) {
-      props.push({ depth: x + y, paint: () => {
-        box(x, y, .34, .36, .10, '#53717a', '#264650', '#34545b');
-        box(x, y, .28, .30, .65, '#708c89', '#365c60', '#476d6d', .10);
-        path([[x-.23,y+.31,.40],[x+.23,y+.31,.40]], '#709596', 2);
-      } });
-    }
-  }
-  jobs.forEach(job => {
-    for (const [kind, point] of [['取', job.pickup], ['送', job.drop]]) {
-      const [x,y] = point;
-      polygon([[x-.31,y-.31,.02],[x+.31,y-.31,.02],[x+.31,y+.31,.02],[x-.31,y+.31,.02]], '#b6dfc143', '#c4e8d184');
-      props.push({ depth: x + y, paint: () => tag([x,y,.40], job.id + kind, '#d6f7df', true) });
-    }
-  });
-
-  for (let i = 0; i < fleet.length; i++) {
-    const route = data.routes[i];
-    const [x, y] = routePoint(route, Math.floor(time));
-    const [nextX, nextY] = routePoint(route, Math.ceil(time));
-    const px = x + (nextX - x) * (time % 1), py = y + (nextY - y) * (time % 1);
-    const tone = fleet[i].color;
-    props.push({ depth: px + py + .35, paint: () => {
-      polygon([[px-.37,py-.31],[px+.37,py-.31],[px+.37,py+.31],[px-.37,py+.31]], '#07101970');
-      box(px, py, .30, .23, .24, tone, tone + 'a0', tone + '80');
-      const pickup = route.findIndex(point => equals(point, data.assignment[i].pickup));
-      if (time >= pickup && time < route.length - 1) box(px, py, .155, .13, .22, '#e8c588', '#a67543', '#c6965c', .24);
-      tag([px,py,.74], 'AGV ' + fleet[i].id, tone);
-    } });
-  }
-  props.sort((a,b) => a.depth - b.depth).forEach(prop => prop.paint());
-  if (stage === 1 || (stage === 2 && Math.abs(time - data.baselineConflicts[0]?.time) < 1.1)) {
-    data.baselineConflicts.forEach(({ point }) => {
-      const [x,y] = project(...point);
-      context.beginPath();
-      context.ellipse(x, y, 26, 14, -.05, 0, 2 * Math.PI);
-      context.strokeStyle = '#ffb17c';
-      context.lineWidth = 3;
-      context.stroke();
-      tag([...point, -.43], stage === 1 ? '最短路会车冲突' : '已错开通行', '#ffcb9f');
-    });
-  }
 }
 
 export function mountDispatch(scene, { signal, motion, animate }) {
@@ -181,7 +67,7 @@ export function mountDispatch(scene, { signal, motion, animate }) {
     taskList.innerHTML = jobs.map(job => {
       const index = plan.assignment.indexOf(job);
       const done = step >= plan.routes[index].length - 1;
-      return `<div class="dispatch-task"><b style="--car:${fleet[index].color}">${job.id}</b><span><strong>${job.title}</strong><small>权重 ${job.weight} · AGV ${fleet[index].id}</small></span><small>${done ? '已送达' : stage === 0 ? '已指派' : '已预约'}</small></div>`;
+      return `<div class="dispatch-task"><b style="--car:${fleet[index].color}">${job.id}</b><span><strong>${job.title}</strong><small>权重 ${job.weight} · AGV ${fleet[index].id}</small><small class="dispatch-transfer">${job.from} → ${job.to}</small></span><small>${done ? '已送达' : stage === 0 ? '已指派' : '已预约'}</small></div>`;
     }).join('');
     metrics.innerHTML = stage === 0
       ? `<span>${plan.candidates} 组指派与预约候选</span><strong>加权完工 ${plan.weighted}</strong><small>另一指派 ${plan.alternativeWeighted}</small>`

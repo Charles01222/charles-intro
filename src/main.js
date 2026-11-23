@@ -15,9 +15,10 @@ const storage = {
 const channel = 'yiyang-next-orbit-slide';
 const systemReduced = matchMedia('(prefers-reduced-motion: reduce)');
 const preferredMotion = ['system', 'full', 'reduced', 'static'];
+const betterMeLinks = { '#betterme-career': 'career', '#betterme-practice': 'practice', '#betterme-wrap': 'overview' };
 const currentRoute = () => {
   const hash = window.location.hash;
-  const target = ['#team', '#collaborate'].includes(hash) ? '#ending' : hash;
+  const target = ['#team', '#collaborate'].includes(hash) ? '#ending' : Object.hasOwn(betterMeLinks, hash) ? '#betterme' : hash;
   const index = slides.findIndex(slide => '#' + slide.id === target);
   return index < 0 ? 0 : index;
 };
@@ -40,7 +41,6 @@ const views = {
   research: researchView,
   'research-wrap': slide => wrapView(slide, '研究收束', 'fingerprint', ['行为', '表示', '规律', '决策']),
   betterme: betterMeView,
-  'betterme-wrap': slide => wrapView(slide, 'BetterMe · 产品收束', 'window', ['理解需求', '设计体验', '开发实现', '持续迭代']),
   dispatch: dispatchView,
   ending: endingView
 };
@@ -139,7 +139,7 @@ function render({ animate = true, transition = false, preserveMenu = false } = {
   screen.style.setProperty('--galaxy', `url("${new URL(presentation.galaxy, document.baseURI).href}")`);
   stage.innerHTML = views[slide.view](slide);
   if (slide.view === 'map') mountGlobe(stage, slide.location, currentMotion, controller.signal);
-  if (slide.view === 'betterme') mountWorkbench(stage, slide, controller.signal);
+  if (slide.view === 'betterme') mountWorkbench(stage, controller.signal, betterMeLinks[location.hash]);
   if (slide.view === 'dispatch') mountDispatch(stage, { signal: controller.signal, motion: currentMotion, animate });
   if (transition && animate && slide.transition) cinema(slide.transition, currentMotion);
   updateControls();
@@ -232,6 +232,7 @@ controlMenu.addEventListener('change', event => {
 
 const keys = { ArrowRight: 'next', ArrowDown: 'next', PageDown: 'next', ArrowLeft: 'prev', ArrowUp: 'prev', PageUp: 'prev', r: 'replay', s: 'skip', f: 'fullscreen', h: 'hide' };
 window.addEventListener('keydown', event => {
+  if (document.querySelector('dialog[open]')) return;
   if (event.key === 'Escape' && menu) {
     const action = menu;
     menu = '';
@@ -248,7 +249,7 @@ window.addEventListener('keydown', event => {
 });
 window.addEventListener('hashchange', () => {
   const target = currentRoute();
-  if (index !== target) { index = target; render(); }
+  if (index !== target || slides[target].view === 'betterme') { index = target; render(); }
 });
 document.addEventListener('fullscreenchange', () => {
   screen.querySelector('[data-action="fullscreen"]').setAttribute('aria-pressed', String(!!document.fullscreenElement));
