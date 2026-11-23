@@ -1,27 +1,18 @@
-import { profile, places, skills } from './content.js';
+import { profile, places } from './content.js';
 import { escapeHtml, header, icon } from './ui.js';
 import { globeMarkup } from './visuals/globe.js';
 
 const name = () => `${escapeHtml(profile.name)} <span>/</span> ${escapeHtml(profile.englishName)}`;
 
 export function intro(slide) {
-  return `<div class="hero content ${slide.id === 'departure' ? 'departure' : ''}">
+  return `<div class="hero content ${['perspectives', 'departure'].includes(slide.id) ? 'departure' : ''}">
     <div class="hero-copy">
-      <div class="eyebrow"><i></i> ${slide.id === 'departure' ? '从银河到地球' : '银河开场'}</div>
+      <div class="eyebrow"><i></i> ${escapeHtml(slide.chapter.label)}</div>
       <p class="hero-name">${name()}</p>
       <h1>${escapeHtml(slide.title)}</h1>
       ${slide.line ? `<p class="hero-line rise">${escapeHtml(slide.line)}</p>` : ''}
-      ${slide.id === 'intro' ? `<p class="hero-question">${escapeHtml(profile.question)}</p>` : ''}
     </div>
   </div>`;
-}
-
-export function perspectives(slide) {
-  return `<div class="hero content perspectives"><div class="hero-copy">
-    ${header('银河开场', slide.title)}
-    <div class="perspective-list">${slide.lines.map((line, i) => `<div class="rise" style="--i:${i}"><strong>${i ? '我' : '大家'}</strong><p>${escapeHtml(line)}</p></div>`).join('')}</div>
-    <p class="aside-joke">${escapeHtml(slide.aside)}</p>
-  </div></div>`;
 }
 
 export function mapView(slide) {
@@ -31,7 +22,7 @@ export function mapView(slide) {
   return `<div class="content journey">
     <div class="journey-split">
       <div class="journey-copy">
-        <div class="eyebrow"><i></i> 成长轨迹</div>
+        <div class="eyebrow"><i></i> ${escapeHtml(slide.chapter.label)}</div>
         <div class="coordinates">${escapeHtml(loc.alias)}</div>
         <div class="location-name">${icon('pin', 22)} ${escapeHtml(loc.place)} <span>${escapeHtml(loc.year)}</span></div>
         <h1>${escapeHtml(slide.title)}</h1>
@@ -52,22 +43,10 @@ export function wrapView(slide, label, symbol, details = []) {
   </div>`;
 }
 
-export function teamView(slide) {
-  return `<div class="content project-content team-content">${header('队友价值', slide.title)}
-    <div class="skill-grid">${skills.map((skill, index) => `<article class="skill-card rise" style="--i:${index}">
-      <span class="skill-icon">${icon(skill.icon, 30)}</span><small>${escapeHtml(skill.source)}</small>
-      <h2>${escapeHtml(skill.title)}</h2><p>${escapeHtml(skill.line)}</p></article>`).join('')}</div>
-  </div>`;
-}
-
-export function collaborateView(slide) {
-  return wrapView(slide, '合作起点', 'orbit', ['明确问题', '梳理输入与输出', '列出约束', '约定成功标准', '决定怎样做原型']);
-}
-
 export function endingView(slide) {
   const { qr } = profile;
   return `<div class="hero content ending"><div class="hero-copy">
-    ${header('回到银河', slide.title)}
+    ${header(slide.chapter.label, slide.title)}
     <div class="contact-card">
       <div class="contact-info"><div class="contact-icon">${icon('mail', 24)}</div>
         <div class="contact-name">${name()}</div>
@@ -80,7 +59,7 @@ export function endingView(slide) {
         ${qr.label ? `<small>${escapeHtml(qr.label)}</small>` : ''}
       </div>
     </div>
-  </div></div>`;
+  </div><div class="blank-book" aria-hidden="true"><i></i><i></i></div></div>`;
 }
 
 export function transitionView(type) {

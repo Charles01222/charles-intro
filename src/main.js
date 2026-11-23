@@ -1,10 +1,10 @@
 import { presentation, profile, slides } from './content.js';
 import { escapeHtml, icon } from './ui.js';
-import { intro, perspectives, mapView, wrapView, teamView, collaborateView, endingView, transitionView } from './views.js';
+import { intro, mapView, wrapView, endingView, transitionView } from './views.js';
 import { mountGlobe } from './visuals/globe.js';
 import { researchView } from './visuals/research.js';
-import { dispatchView } from './visuals/dispatch.js';
-import { betterMeView, attachDemo } from './betterme/demo.js';
+import { dispatchView, mountDispatch } from './visuals/dispatch.js';
+import { betterMeView, mountWorkbench } from './betterme/workbench.js';
 
 const screen = document.querySelector('#app');
 const hasPresenterNotes = document.documentElement.dataset.audience === 'presenter';
@@ -16,7 +16,9 @@ const channel = 'yiyang-next-orbit-slide';
 const systemReduced = matchMedia('(prefers-reduced-motion: reduce)');
 const preferredMotion = ['system', 'full', 'reduced', 'static'];
 const currentRoute = () => {
-  const index = slides.findIndex(slide => '#' + slide.id === window.location.hash);
+  const hash = window.location.hash;
+  const target = ['#team', '#collaborate'].includes(hash) ? '#ending' : hash;
+  const index = slides.findIndex(slide => '#' + slide.id === target);
   return index < 0 ? 0 : index;
 };
 let index = currentRoute();
@@ -34,15 +36,12 @@ const motion = () => mode === 'system' ? automatic() : mode;
 
 const views = {
   intro,
-  perspectives,
   map: mapView,
   research: researchView,
   'research-wrap': slide => wrapView(slide, '研究收束', 'fingerprint', ['行为', '表示', '规律', '决策']),
   betterme: betterMeView,
   'betterme-wrap': slide => wrapView(slide, 'BetterMe · 产品收束', 'window', ['理解需求', '设计体验', '开发实现', '持续迭代']),
   dispatch: dispatchView,
-  team: teamView,
-  collaborate: collaborateView,
   ending: endingView
 };
 
@@ -73,6 +72,7 @@ screen.innerHTML = `<div class="space-backdrop" aria-hidden="true"></div>
 const stage = screen.querySelector('#stage');
 const controls = screen.querySelector('.bottom-actions');
 const buttons = screen.querySelector('.chapters');
+buttons.style.setProperty('--chapter-count', presentation.chapters.length);
 const cineHost = screen.querySelector('#cinematic');
 const controlMenu = screen.querySelector('#control-menu');
 const status = screen.querySelector('#status');
@@ -139,7 +139,8 @@ function render({ animate = true, transition = false, preserveMenu = false } = {
   screen.style.setProperty('--galaxy', `url("${new URL(presentation.galaxy, document.baseURI).href}")`);
   stage.innerHTML = views[slide.view](slide);
   if (slide.view === 'map') mountGlobe(stage, slide.location, currentMotion, controller.signal);
-  if (slide.view === 'betterme') attachDemo(stage, controller.signal);
+  if (slide.view === 'betterme') mountWorkbench(stage, slide, controller.signal);
+  if (slide.view === 'dispatch') mountDispatch(stage, { signal: controller.signal, motion: currentMotion, animate });
   if (transition && animate && slide.transition) cinema(slide.transition, currentMotion);
   updateControls();
   storage.set(channel, slide.id);

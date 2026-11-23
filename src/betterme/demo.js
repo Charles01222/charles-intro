@@ -1,25 +1,16 @@
 import { betterMe } from '../content.js';
-import { escapeHtml, header, icon } from '../ui.js';
+import { escapeHtml, icon } from '../ui.js';
 import { DEMO_ATS_SAMPLE, diagnoseAtsResume } from './ats-diagnostics.js';
 
-export function betterMeView(slide) {
-  return `<div class="content project-content better-content">
-    ${header('BetterMe · 职业工作台', slide.title)}
-    <div class="better-layout">
-      <div class="mac-window better-window">
-        <div class="window-bar"><span class="traffic"><i></i><i></i><i></i></span><span>BetterMe · ${betterMe.demo}</span>
-        <div class="demo-actions">
+export function atsView() {
+  return `<div class="ats-workspace">
+        <div class="demo-actions ats-workspace-actions"><strong>${betterMe.demo}</strong>
           <button data-demo="fallback" type="button">简明视图</button>
           <button data-demo="reset" type="button" title="复位示例与诊断">${icon('replay', 14)} 复位</button>
-          <button data-action="next" type="button">返回主线</button>
-        </div></div>
+        </div>
         <div id="ats-host" class="ats-host"><p class="ats-loading" role="status">正在打开本地诊断…</p></div>
-        <div class="demo-disclaimer"><i></i>浏览器本地规则 · 评分表示文本就绪度<span>数据仅作演示</span></div>
-      </div>
-      <aside class="product-cues" aria-label="产品讲述提示">${betterMe.cues.map(([label, line]) => `<div><h2>${label}</h2><p>${line}</p></div>`).join('')}
-      <a href="${escapeHtml(betterMe.source)}" target="_blank" rel="noopener noreferrer">查看 agent-os 源码 ${icon('external', 14)}</a></aside>
-    </div>
-  </div>`;
+        <div class="demo-disclaimer"><i></i>浏览器本地规则 · 评分表示文本就绪度</div>
+      </div>`;
 }
 
 function compactDemo(host) {
