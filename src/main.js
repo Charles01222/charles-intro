@@ -121,9 +121,11 @@ function cinema(type, currentMotion) {
   cinemaController = new AbortController();
   cineHost.innerHTML = transitionView(type);
   screen.classList.add('cinema-active');
-  if (type === 'universe') mountGlobe(cineHost, 'shanghai', currentMotion === 'static' ? 'static' : 'reduced', cinemaController.signal, true);
-  const duration = currentMotion === 'full' ? [1170, 3900] : [650, 2380];
-  cinemaTimer = setTimeout(finishCinema, duration[type === 'universe' ? 1 : 0]);
+  if (type === 'folio') mountGlobe(cineHost, 'shanghai', currentMotion === 'static' ? 'static' : 'reduced', cinemaController.signal, true);
+  const duration = type === 'folio'
+    ? (currentMotion === 'full' ? 2690 : 900)
+    : (currentMotion === 'full' ? 1170 : 650);
+  cinemaTimer = setTimeout(finishCinema, duration);
 }
 
 function render({ animate = true, transition = false, preserveMenu = false } = {}) {

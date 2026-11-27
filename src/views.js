@@ -5,14 +5,23 @@ import { globeMarkup } from './visuals/globe.js';
 const name = () => `${escapeHtml(profile.name)} <span>/</span> ${escapeHtml(profile.englishName)}`;
 
 export function intro(slide) {
-  return `<div class="hero content ${slide.identity ? 'hero-opening' : 'departure'}">
+  return `<div class="hero content ${slide.identity ? 'hero-opening' : 'departure'}${slide.portrait ? ' has-portrait' : ''}">
     <div class="hero-copy">
       <div class="eyebrow"><i></i> ${escapeHtml(slide.chapter.label)}</div>
       ${slide.identity ? `<h1>${escapeHtml(profile.name)} <small>/ ${escapeHtml(profile.englishName)}</small></h1>` :
         `<p class="hero-name">${name()}</p><h1>${escapeHtml(slide.title)}</h1>`}
       ${slide.line ? `<p class="hero-line rise">${escapeHtml(slide.line)}</p>` : ''}
     </div>
+    ${slide.portrait ? `<figure class="opening-portrait"><img src="${escapeHtml(profile.portrait)}" width="640" height="931" alt="李宜阳的证件照"></figure>` : ''}
     ${slide.subtitle ? `<p class="opening-subtitle rise">${escapeHtml(slide.subtitle)}</p>` : ''}
+  </div>`;
+}
+
+function journeyStory(story) {
+  return `<div class="journey-story${story.photo ? ' has-life-photo' : ''}">
+    ${story.photo ? `<img class="journey-life-photo" src="${escapeHtml(story.photo)}" alt="${escapeHtml(story.photoAlt)}">` : ''}
+    <ul>${story.beats.map(beat => `<li>${escapeHtml(beat)}</li>`).join('')}</ul>
+    <img class="journey-illustration" src="${escapeHtml(story.illustration)}" alt="">
   </div>`;
 }
 
@@ -22,12 +31,12 @@ export function mapView(slide) {
   const current = entries.findIndex(([id]) => id === slide.location);
   return `<div class="content journey">
     <div class="journey-split">
-      <div class="journey-copy">
+      <div class="journey-copy${slide.story ? ' has-story' : ''}">
         <div class="eyebrow"><i></i> ${escapeHtml(slide.chapter.label)}</div>
         <div class="coordinates">${escapeHtml(loc.alias)}</div>
         <div class="location-name">${icon('pin', 22)} ${escapeHtml(loc.place)} <span>${escapeHtml(loc.year)}</span></div>
         <h1>${escapeHtml(slide.title)}</h1>
-        ${slide.line || slide.location !== 'nanjing' ? `<p>${escapeHtml(slide.line || loc.detail)}</p>` : ''}
+        ${slide.story ? journeyStory(slide.story) : `<p>${escapeHtml(slide.line || loc.detail)}</p>`}
       </div>
       ${globeMarkup(loc)}
     </div>
@@ -46,32 +55,32 @@ export function wrapView(slide, label, symbol, details = []) {
 
 export function endingView(slide) {
   const { qr } = profile;
-  return `<div class="hero content ending"><div class="hero-copy">
-    ${header(slide.chapter.label, slide.title)}
-    <div class="contact-card">
-      <div class="contact-info"><div class="contact-icon">${icon('mail', 24)}</div>
-        <div class="contact-name">${name()}</div>
-        <a href="mailto:${escapeHtml(profile.email)}">${escapeHtml(profile.email)}</a>
+  return `<div class="content ending">
+    <div class="folio-spread">
+      <div class="folio-page folio-left">
+        ${header(slide.chapter.label, slide.title)}
+        <div class="folio-identity">
+          <p class="folio-name">${name()}</p>
+          <a href="mailto:${escapeHtml(profile.email)}">${icon('mail', 18)}<span>${escapeHtml(profile.email)}</span></a>
+        </div>
+      </div>
+      <div class="folio-page folio-right">
+        <figure class="folio-qr">
+          <img src="${escapeHtml(qr.image)}" width="734" height="734" alt="李宜阳的微信联系二维码">
+          <figcaption>${escapeHtml(qr.label)}</figcaption>
+        </figure>
         <p>${escapeHtml(profile.invitation)}</p>
       </div>
-      <div class="qr-box">
-        ${qr.image ? `<div class="qr-tile"><img src="${escapeHtml(qr.image)}" alt="${escapeHtml(qr.label || '联系二维码')}"></div>` :
-          `<div class="qr-tile qr-placeholder">${icon('qr', 32)}<span>二维码预留</span></div>`}
-        ${qr.label ? `<small>${escapeHtml(qr.label)}</small>` : ''}
-      </div>
+      <div class="folio-turn" aria-hidden="true"><div class="folio-cover"></div><div class="folio-cover-lining"></div></div>
     </div>
-  </div><div class="blank-book" aria-hidden="true"><i></i><i></i></div></div>`;
+  </div>`;
 }
 
 export function transitionView(type) {
   if (type === 'arrival') return `<div class="cinematic arrival" aria-hidden="true"><div class="cinema-galaxy"><i></i></div></div>`;
-  return `<div class="cinematic universe" aria-hidden="true">
-    <div class="universe-route">${globeMarkup(places.shanghai, true)}<div>南京 · 美国 · 澳洲 · 上海</div></div>
-    <div class="fingertip">
-      <div class="small-universe"></div>
-      <svg viewBox="0 0 420 240" fill="none" aria-hidden="true"><defs><linearGradient id="hand-fade" x1="200" y1="85" x2="340" y2="224" gradientUnits="userSpaceOnUse"><stop stop-color="#c0d7ff"/><stop offset="1" stop-color="#334b72" stop-opacity="0"/></linearGradient></defs>
-      <path d="M413 225c-35-14-55-25-82-54-17-18-34-36-62-35l-46 4c-11 1-20 7-18 14 2 7 6 9 21 8l23-2m106 61c-13-3-28-7-44-19l-44-32c-12-8-26-10-42-8l-65 10c-10 1-22-1-29-8l-46-47c-8-8-21-10-26-2-4 6 0 12 7 22l41 52c13 17 31 25 52 23l69-5" stroke="url(#hand-fade)" stroke-linecap="round" stroke-width="2.4"/>
-      <path d="m209 155-55-1-37-30c-8-7-16-9-23-5m123 45-57-1-26-22" stroke="url(#hand-fade)" stroke-linecap="round" stroke-width="1.5"/>
-      </svg>
+  return `<div class="cinematic folio-transition" aria-hidden="true">
+    <div class="folio-route">
+      ${globeMarkup(places.shanghai, true)}
+      <p>南京 · 美国 · 墨尔本 · 上海</p>
     </div></div>`;
 }

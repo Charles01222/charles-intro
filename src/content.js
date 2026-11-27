@@ -3,7 +3,8 @@ export const profile = {
   englishName: 'Yiyang Li',
   event: '上海交通大学 · 智能软件微专业',
   email: 'charles_0222@outlook.com',
-  qr: { image: '', label: '' },
+  portrait: './assets/story/portrait.webp',
+  qr: { image: './assets/story/wechat.png', label: '微信 · 扫码添加' },
   invitation: '如果我们的故事有交集，欢迎来聊。'
 };
 
@@ -39,16 +40,30 @@ export const presentation = {
   land: './assets/land-topology.json',
   chapters: [
     { id: 'galaxy', label: '开篇', seconds: 55, slides: [
-      { id: 'intro', view: 'intro', title: openingName, identity: true },
+      { id: 'intro', view: 'intro', title: openingName, identity: true, portrait: true },
       { id: 'half', view: 'intro', title: openingName, identity: true, subtitle: '我是半个应届生' },
-      { id: 'perspectives', view: 'intro', title: '我一直好奇，机器怎么做决定。', line: '这个问题后来把我带到了实验室、职业工作台和工厂。' },
+      { id: 'perspectives', view: 'intro', title: '走出实验室，看看 AI 能做什么。', line: '带着研究里的好奇心，去理解行业里的问题。' },
       { id: 'departure', view: 'intro', title: '故事从南京开始。', action: '翻开第一章' }
     ] },
     { id: 'nanjing', label: '故城 · 南京', seconds: 25, slides: [
-      { id: 'nanjing', view: 'map', location: 'nanjing', title: '在南京长大。', transition: 'arrival' }
+      {
+        id: 'nanjing', view: 'map', location: 'nanjing', title: '编程，从游戏开始。', transition: 'arrival',
+        story: {
+          photo: './assets/story/nanjing-life.webp',
+          photoAlt: '李宜阳的生活照',
+          illustration: './assets/story/sandbox.webp',
+          beats: ['NPC 的选择与反馈', '沙盒游戏里的自动化', '初中开始编程']
+        }
+      }
     ] },
     { id: 'america', label: '渡海 · 美国', seconds: 50, slides: [
-      { id: 'america', view: 'map', location: 'america', title: '从手写代码开始，学习怎样让机器理解问题。' }
+      {
+        id: 'america', view: 'map', location: 'america', title: '从手搓代码，到追问机器怎么学。',
+        story: {
+          illustration: './assets/story/learning.webp',
+          beats: ['编程基础 · Java → C → Python', '留学后期 · GPT-3 与神经网络']
+        }
+      }
     ] },
     { id: 'research', label: '求索 · 墨尔本', seconds: 170, slides: [
       { id: 'australia', view: 'map', location: 'australia', title: '不同的行为背后，能不能找到可以计算的规律？' },
@@ -63,7 +78,7 @@ export const presentation = {
       { id: 'dispatch', view: 'dispatch', title: '几辆车、几项任务，怎么跑才顺？', action: '翻到下一页' }
     ] },
     { id: 'ending', label: '留白', seconds: 30, slides: [
-      { id: 'ending', view: 'ending', title: '下一页，留给还没发生的故事。', transition: 'universe' }
+      { id: 'ending', view: 'ending', title: '下一页，留给还没发生的故事。', transition: 'folio' }
     ] }
   ]
 };
